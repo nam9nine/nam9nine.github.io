@@ -16,31 +16,16 @@ timezone: Asia/Seoul
 
 title: nam9's Blog # the main title
 
-<<<<<<< HEAD
 tagline: 개발 기술 블로그입니다. # it will display as the subtitle
-=======
-tagline: A text-focused Jekyll theme # it will display as the subtitle
->>>>>>> origin/master
 
-description: >- # used by seo meta and the atom feed
-  Go언어를 좋아하는 학생입니다.
+description: Go언어를 좋아하는 학생입니다.
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
-<<<<<<< HEAD
 url: "https://nam9nine.github.io"
 
 github:
   username: nam9nine # change to your GitHub username
-=======
-url: ""
-
-github:
-  username: github_username # change to your GitHub username
-
-twitter:
-  username: twitter_username # change to your Twitter username
->>>>>>> origin/master
 
 social:
   # Change to your full name.
@@ -49,12 +34,7 @@ social:
   email: southgyuios19@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-<<<<<<< HEAD
     - https://github.com/nam9nine # change to your GitHub homepage
-=======
-    - https://twitter.com/username # change to your Twitter homepage
-    - https://github.com/username # change to your GitHub homepage
->>>>>>> origin/master
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
@@ -239,5 +219,3 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
-
-cache_dir: .jekyll-cache
