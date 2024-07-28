@@ -1,11 +1,10 @@
 ---
-title: [C++ 오류] Double Free 에러 해결하기
+title: "[C++ Error] Double Free 에러 해결하기"
 date: 2024-07-29 00:41:00 +0900
-categories: [C++]
+categories: [C++, Error]
 tags: [C++]
 author: me
 ---
-
 # Double Free 에러 해결하기
 
 ## 문제 발생
@@ -58,7 +57,7 @@ main(57049,0x1fad68c00) malloc: *** set a breakpoint in malloc_error_break to de
 
 `MyString`의 복사 생성자가 멤버 변수 `str_`에 대해 깊은 복사(deep copy)를 수행하지 않고 얕은 복사(shallow copy)를 수행했기 때문입니다. 이로 인해 두 객체가 메모리 주소를 공유하며, 한 객체가 소멸하면서 할당된 메모리를 해제하고, 다른 객체가 다시 같은 메모리를 해제하려고 하여 double free 오류가 발생합니다.
 
-## 왜 2번 해제되면 안 되는가?
+### 왜 2번 해제되면 안 되는가?
 
 메모리가 한 번 해제되면, 해당 메모리 주소는 시스템에 의해 재사용 준비가 됩니다. 이미 해제된 메모리 주소를 다시 해제하려고 하면 메모리 관리 시스템이 손상될 수 있으며, 이는 프로그램의 충돌이나 예측 불가능한 다른 행동을 초래할 수 있습니다. 또한, 보안 측면에서도 큰 위험을 수반합니다.
 
