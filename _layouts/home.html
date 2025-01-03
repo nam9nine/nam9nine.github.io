@@ -5,13 +5,41 @@ refactor: true
 
 {% include lang.html %}
 
+<!-- 1) 스타일: 이미지 썸네일에 object-fit + aspect-ratio 적용 -->
+<style>
+  /* 
+    홈 썸네일 공통 클래스 .home-thumbnail
+    예: 16:9 비율. 필요하면 4:3, 3:2 등 다른 비율로 바꿔도 됨.
+    구형 브라우저 호환이 필요하다면 aspect-ratio 대신 height를 고정하거나 padding-bottom 기법을 사용할 수 있음.
+  */
+  .home-thumbnail {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    object-position: 50% 20%; /* 세로를 약간 위로 당겨서 표시 (취향에 맞게) */
+    display: block;
+  }
+
+  /* 만약 aspect-ratio 미지원 브라우저를 대비하려면, 
+     아래처럼 별도 클래스 .legacy-thumbnail 을 두고 height 고정도 가능 */
+  .legacy-thumbnail {
+    width: 100%;
+    height: 180px; 
+    object-fit: cover;
+    object-position: 50% 20%;
+    display: block;
+  }
+</style>
+
+
+<!-- 2) 핀(Post.pin==true) 포스트와 일반 포스트를 모두 가져와서, 
+       지금 페이지(paginator) 기준으로 표시 -->
 {% assign all_pinned = site.posts | where: 'pin', 'true' %}
 {% assign all_normal = site.posts | where_exp: 'item', 'item.pin != true and item.hidden != true' %}
 
 {% assign posts = '' | split: '' %}
 
 <!-- Get pinned posts on current page -->
-
 {% assign visible_start = paginator.page | minus: 1 | times: paginator.per_page %}
 {% assign visible_end = visible_start | plus: paginator.per_page %}
 
@@ -30,7 +58,6 @@ refactor: true
 {% endif %}
 
 <!-- Get normal posts on current page -->
-
 {% assign normal_size = paginator.posts | size | minus: pinned_size %}
 
 {% if normal_size > 0 %}
@@ -47,6 +74,8 @@ refactor: true
   {% endfor %}
 {% endif %}
 
+
+<!-- 3) 포스트 목록 렌더링 -->
 <div id="post-list" class="flex-grow-1 px-xl-1">
   {% for post in posts %}
     <article class="card-wrapper card">
@@ -62,13 +91,18 @@ refactor: true
           {% assign alt = post.image.alt | xml_escape | default: 'Preview Image' %}
 
           {% assign lqip = null %}
-
           {% if post.image.lqip %}
             {% capture lqip %}lqip="{{ post.image.lqip }}"{% endcapture %}
           {% endif %}
 
           <div class="col-md-5">
-            <img src="{{ src }}" alt="{{ alt }}" {{ lqip }}>
+            <!-- 4) 썸네일에 .home-thumbnail 클래스 적용 -->
+            <img 
+              src="{{ src }}" 
+              alt="{{ alt }}" 
+              {{ lqip }}
+              class="home-thumbnail" 
+              />
           </div>
 
           {% assign card_body_col = '7' %}
@@ -117,6 +151,8 @@ refactor: true
 </div>
 <!-- #post-list -->
 
+
+<!-- 5) 페이지네이션 -->
 {% if paginator.total_pages > 1 %}
   {% include post-paginator.html %}
 {% endif %}

@@ -1,0 +1,12 @@
+<!-- _includes/featured-image.html -->
+{% if page.image and page.image.path %}
+  <figure class="post-thumbnail">
+    <img
+      src="{{ page.image.path | relative_url }}"
+      alt="{{ page.image.alt | default: '' }}"
+      {% if page.image.style %}
+        style="{{ page.image.style }}"
+      {% endif %}
+    >
+  </figure>
+{% endif %}
