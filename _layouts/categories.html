@@ -8,48 +8,54 @@ layout: page
 <!-- (1) Collapse 애니메이션을 빨리 (0.1s) 하고, 
      폴더 아이콘은 shown.bs.collapse/hidden.bs.collapse 시점 그대로 -->
 <style>
-  /* Collapse 애니메이션 속도 조정 */
+  /* 원한다면 0.1s -> 0.05s, none 등으로 더 빠르거나 없앨 수 있음 */
   .collapse,
   .collapsing {
-    transition: height 0.1s ease;
+    transition: height 0.1s ease !important;
   }
 
-  /* 카테고리 트리거 아이콘 스타일 */
+  /* 화살표 아이콘 (기존 그대로) */
   .category-trigger i.fas {
     display: inline-block;
     width: 1em;
     text-align: center;
   }
-
-  /* 폴더 아이콘 상태에 따른 변경 */
   .category-trigger[aria-expanded="false"] i.fas::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     content: "\f105"; /* fa-angle-right */
   }
-
   .category-trigger[aria-expanded="true"] i.fas::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     content: "\f107"; /* fa-angle-down */
   }
 
-  /* 버튼 정렬 개선을 위한 추가 CSS */
+  /* 카드 헤더 스타일 수정 */
+  .card-header {
+    position: relative; /* 자식 요소의 절대 위치를 위한 상대 위치 설정 */
+    padding-right: 2.5em; /* 버튼 공간 확보를 위한 오른쪽 패딩 */
+  }
+
+  /* 버튼 위치 조정 */
   .category-trigger {
+    position: absolute;
+    top: 50%; /* 수직 중앙 정렬 */
+    right: 1em; /* 오른쪽 여백 */
+    transform: translateY(-50%); /* 정확한 수직 중앙 정렬 */
     display: flex;
     align-items: center;
     justify-content: center;
     width: 2em; /* 버튼의 고정 너비 */
     height: 2em; /* 버튼의 고정 높이 */
     cursor: pointer;
+    text-decoration: none; /* 링크의 기본 밑줄 제거 */
+    color: inherit; /* 부모 요소의 텍스트 색상 상속 */
   }
 
-  .category-trigger.root-trigger {
-    margin-right: 0.5em;
-  }
-
-  .category-trigger.sub-trigger {
-    margin-left: auto;
+  /* 버튼 호버 효과 (선택 사항) */
+  .category-trigger:hover {
+    color: #007bff; /* 원하는 색상으로 변경 가능 */
   }
 
   /* 폴더 아이콘 스타일 조정 */
@@ -58,14 +64,40 @@ layout: page
     transition: transform 0.1s ease;
   }
 
-  /* 추가적인 버튼 정렬을 위한 CSS */
-  .card-header {
+  /* 카드 헤더 내 내용 정렬 개선 */
+  .card-header .ms-2 {
     display: flex;
     align-items: center;
-    justify-content: space-between;
   }
-</style>
 
+  .card-header .ms-2 a {
+    text-decoration: none; /* 링크의 기본 밑줄 제거 */
+    color: inherit; /* 부모 요소의 텍스트 색상 상속 */
+  }
+
+  .card-header .ms-2 a:hover {
+    text-decoration: underline; /* 호버 시 밑줄 표시 */
+  }
+
+  /* 리스트 그룹 아이템 내 접힘/펼침 버튼 위치 조정 */
+  .sub-trigger {
+    position: absolute;
+    top: 50%;
+    right: 1em;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2em;
+    height: 2em;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* 추가적인 버튼 정렬을 위한 CSS */
+  /* 필요에 따라 수정 가능 */
+</style>
 
 {% assign HEAD_PREFIX = 'h_' %}
 {% assign LIST_PREFIX = 'l_' %}
