@@ -8,29 +8,64 @@ layout: page
 <!-- (1) Collapse 애니메이션을 빨리 (0.1s) 하고, 
      폴더 아이콘은 shown.bs.collapse/hidden.bs.collapse 시점 그대로 -->
 <style>
-  /* 원한다면 0.1s -> 0.05s, none 등으로 더 빠르거나 없앨 수 있음 */
+  /* Collapse 애니메이션 속도 조정 */
   .collapse,
   .collapsing {
-    transition: height 0.1s ease !important;
+    transition: height 0.1s ease;
   }
 
-  /* 화살표 아이콘 (기존 그대로) */
+  /* 카테고리 트리거 아이콘 스타일 */
   .category-trigger i.fas {
     display: inline-block;
     width: 1em;
     text-align: center;
   }
+
+  /* 폴더 아이콘 상태에 따른 변경 */
   .category-trigger[aria-expanded="false"] i.fas::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     content: "\f105"; /* fa-angle-right */
   }
+
   .category-trigger[aria-expanded="true"] i.fas::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     content: "\f107"; /* fa-angle-down */
   }
+
+  /* 버튼 정렬 개선을 위한 추가 CSS */
+  .category-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2em; /* 버튼의 고정 너비 */
+    height: 2em; /* 버튼의 고정 높이 */
+    cursor: pointer;
+  }
+
+  .category-trigger.root-trigger {
+    margin-right: 0.5em;
+  }
+
+  .category-trigger.sub-trigger {
+    margin-left: auto;
+  }
+
+  /* 폴더 아이콘 스타일 조정 */
+  .root-folder-icon,
+  .sub-folder-icon {
+    transition: transform 0.1s ease;
+  }
+
+  /* 추가적인 버튼 정렬을 위한 CSS */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 </style>
+
 
 {% assign HEAD_PREFIX = 'h_' %}
 {% assign LIST_PREFIX = 'l_' %}
