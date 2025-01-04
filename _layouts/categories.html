@@ -1,205 +1,9 @@
----
-layout: page
-# All the Categories of posts
----
-
-{% include lang.html %}
-
-<!-- (1) Collapse 애니메이션을 빨리 (0.1s) 하고, 
-     폴더 아이콘은 shown.bs.collapse/hidden.bs.collapse 시점 그대로 -->
-<style>
-  /* Collapse 애니메이션 속도 조정 */
-  .collapse,
-  .collapsing {
-    transition: height 0.1s ease;
-  }
-
-  /* 카테고리 트리거 아이콘 스타일 */
-  .category-trigger i.fas {
-    display: inline-block;
-    width: 1em;
-    text-align: center;
-  }
-
-  /* 폴더 아이콘 상태에 따른 변경 */
-  .category-trigger[aria-expanded="false"] i.fas::before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: "\f105"; /* fa-angle-right */
-  }
-
-  .category-trigger[aria-expanded="true"] i.fas::before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: "\f107"; /* fa-angle-down */
-  }
-
-  /* 버튼 정렬 개선을 위한 추가 CSS */
-  .category-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2em; /* 버튼의 고정 너비 */
-    height: 2em; /* 버튼의 고정 높이 */
-    cursor: pointer;
-  }
-
-  .category-trigger.root-trigger {
-    margin-right: 0.5em;
-  }
-
-  .category-trigger.sub-trigger {
-    margin-left: auto;
-  }
-
-  /* 폴더 아이콘 스타일 조정 */
-  .root-folder-icon,
-  .sub-folder-icon {
-    transition: transform 0.1s ease;
-  }
-
-  /* 추가적인 버튼 정렬을 위한 CSS */
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-</style>
-
-
-{% assign HEAD_PREFIX = 'h_' %}
-{% assign LIST_PREFIX = 'l_' %}
-{% assign group_index = 0 %}
-
-{% assign sort_categories = site.categories | sort %}
-
-{% for category in sort_categories %}
-  {% assign category_name = category | first %}
-  {% assign posts_of_category = site.categories[category_name] %}
-  {% assign first_post = posts_of_category | first %}
-
-  {% if first_post and category_name == first_post.categories[0] %}
-    {% assign sub_categories = '' | split: '' %}
-
-    {% for post in posts_of_category %}
-      {% if post.categories.size > 1 and post.categories[0] == category_name %}
-        {% assign second_category = post.categories[1] %}
-        {% unless sub_categories contains second_category %}
-          {% assign sub_categories = sub_categories | push: second_category %}
-        {% endunless %}
-      {% endif %}
-    {% endfor %}
-
-    {% assign sub_categories = sub_categories | sort %}
-    {% assign sub_categories_size = sub_categories | size %}
-
-    <div class="card categories">
-      <div
-        id="{{ HEAD_PREFIX }}{{ group_index }}"
-        class="card-header d-flex justify-content-between hide-border-bottom"
-      >
-        <span class="ms-2">
-          <!-- 루트 폴더 아이콘 -->
-          <i class="far fa-folder fa-fw root-folder-icon"></i>
-
-          {% capture _category_url %}/categories/{{ category_name | slugify | url_encode }}/{% endcapture %}
-          <a href="{{ _category_url | relative_url }}" class="mx-2">{{ category_name }}</a>
-          <span class="text-muted small font-weight-light">
-            {% if sub_categories_size > 0 %}
-              {{ sub_categories_size }}개 카테고리,
-            {% endif %}
-            {{ posts_of_category.size }}개 포스트
-          </span>
-        </span>
-
-        <!-- 루트 접힘/펼침 (root-trigger) -->
-        <a
-          href="#{{ LIST_PREFIX }}{{ group_index }}"
-          data-bs-toggle="collapse"
-          aria-expanded="false"
-          class="category-trigger root-trigger hide-border-bottom"
-        >
-          <i class="fas"></i>
-        </a>
-      </div>
-
-      <!-- 루트 전용 collapse -->
-      <div id="{{ LIST_PREFIX }}{{ group_index }}" class="collapse root-collapse" aria-expanded="false">
-        {% if sub_categories_size > 0 %}
-          <ul class="list-group">
-            {% for sub_category in sub_categories %}
-              {% assign sub_posts = site.categories[sub_category] | where_exp: "post", "post.categories contains category_name" %}
-              <li class="list-group-item">
-                <!-- 하위 폴더 아이콘 -->
-                <i class="far fa-folder fa-fw sub-folder-icon"></i>
-                {% capture _sub_ctg_url %}/categories/{{ sub_category | slugify | url_encode }}/{% endcapture %}
-                <a href="{{ _sub_ctg_url | relative_url }}" class="mx-2">{{ sub_category }}</a>
-                <span class="text-muted small font-weight-light">
-                  {{ sub_posts.size }}개 포스트
-                </span>
-
-                {% if sub_posts.size > 0 %}
-                  <!-- 하위 접힘/펼침 (sub-trigger) -->
-                  <a
-                    href="#{{ LIST_PREFIX }}sub_{{ group_index }}_{{ forloop.index }}"
-                    data-bs-toggle="collapse"
-                    aria-expanded="false"
-                    class="category-trigger sub-trigger hide-border-bottom float-end"
-                  >
-                    <i class="fas"></i>
-                  </a>
-
-                  <!-- 하위 전용 collapse -->
-                  <div
-                    id="{{ LIST_PREFIX }}sub_{{ group_index }}_{{ forloop.index }}"
-                    class="collapse child-collapse"
-                    aria-expanded="false"
-                  >
-                    <ul class="content ps-0 mt-2">
-                      {% for sub_post in sub_posts %}
-                        <li class="d-flex justify-content-between px-md-3">
-                          <a href="{{ sub_post.url | relative_url }}" class="mx-2">
-                            <i class="far fa-file"></i>&nbsp;&nbsp;{{ sub_post.title | truncate: 70 }}
-                          </a>
-                          <span class="dash flex-grow-1"></span>
-                          {% include datetime.html date=sub_post.date wrap='span' class='text-muted small' lang=lang %}
-                        </li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                {% endif %}
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-
-        <!-- 루트 카테고리 직속 포스트 -->
-        <ul class="content ps-0">
-          {% for post in posts_of_category %}
-            {% if post.categories.size == 1 %}
-              <li class="d-flex justify-content-between px-md-3">
-                <a href="{{ post.url | relative_url }}" class="mx-2">
-                  <i class="far fa-file"></i>&nbsp;&nbsp;{{ post.title | truncate: 70 }}
-                </a>
-                <span class="dash flex-grow-1"></span>
-                {% include datetime.html date=post.date wrap='span' class='text-muted small' lang=lang %}
-              </li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-
-    {% assign group_index = group_index | plus: 1 %}
-  {% endif %}
 {% endfor %}
-
 <!-- (2) 자바스크립트: 부모/자식 독립 + 폴더 아이콘 shown.bs.collapse/hidden.bs.collapse 
      (즉, 펼침/접힘 완료 후 바뀜), 
      속도만 CSS로 빠르게 조정 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
   // (A) 자식 Collapse 이벤트 전파 차단 (독립 동작)
   document.addEventListener('show.bs.collapse', function(e) {
     if (e.target.classList.contains('child-collapse')) {
@@ -213,12 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopImmediatePropagation();
     }
   }, true);
-
   // (B) shown.bs.collapse → 폴더 아이콘 열림
   document.addEventListener('shown.bs.collapse', function(e) {
     let trig = document.querySelector('[href="#' + e.target.id + '"]');
     if (!trig) return;
-
     // 루트 열림
     if (trig.classList.contains('root-trigger')) {
       let cardHeader = trig.closest('.card-header');
@@ -242,12 +44,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-
   // (C) hidden.bs.collapse → 폴더 아이콘 닫힘
   document.addEventListener('hidden.bs.collapse', function(e) {
     let trig = document.querySelector('[href="#' + e.target.id + '"]');
     if (!trig) return;
-
     // 루트 닫힘
     if (trig.classList.contains('root-trigger')) {
       let cardHeader = trig.closest('.card-header');
